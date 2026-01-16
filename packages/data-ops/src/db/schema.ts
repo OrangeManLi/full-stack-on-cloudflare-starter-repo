@@ -1,4 +1,5 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, numeric } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 
 export const linksTable = sqliteTable("links", {
   linkId: text("link_id").primaryKey(),
@@ -8,12 +9,8 @@ export const linksTable = sqliteTable("links", {
     default: string;
     [countryCode: string]: string;
   }>(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .$defaultFn(() => new Date()),
+  createdAt: numeric("created").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: numeric("updated").notNull().default(sql`(CURRENT_TIMESTAMP)`),
 });
 
 export type Link = typeof linksTable.$inferSelect;

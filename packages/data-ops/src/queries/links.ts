@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { getDb } from "../db/database";
 import { linksTable, type Link } from "../db/schema";
@@ -15,18 +15,21 @@ export async function createLink(params: {
   const db = getDb();
   const linkId = nanoid(10);
 
-  const newLink = {
+  await db.insert(linksTable).values({
     linkId,
     accountId: params.accountId,
     name: params.name,
     destinations: params.destinations,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  });
 
-  await db.insert(linksTable).values(newLink);
+  // Fetch the inserted link to get the auto-generated timestamps
+  const inserted = await db
+    .select()
+    .from(linksTable)
+    .where(eq(linksTable.linkId, linkId))
+    .limit(1);
 
-  return newLink;
+  return inserted[0];
 }
 
 /**
@@ -94,7 +97,7 @@ export async function updateLinkDestinations(params: {
     .update(linksTable)
     .set({
       destinations: params.destinations,
-      updatedAt: new Date(),
+      updatedAt: sql`(CURRENT_TIMESTAMP)`,
     })
     .where(eq(linksTable.linkId, params.linkId));
 
@@ -115,7 +118,7 @@ export async function updateLinkName(params: {
     .update(linksTable)
     .set({
       name: params.name,
-      updatedAt: new Date(),
+      updatedAt: sql`(CURRENT_TIMESTAMP)`,
     })
     .where(eq(linksTable.linkId, params.linkId));
 

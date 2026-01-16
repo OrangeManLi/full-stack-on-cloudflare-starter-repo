@@ -38,7 +38,7 @@ export const linksTrpcRoutes = t.router({
         linkId: link.linkId,
         name: link.name,
         destinations: link.destinations,
-        created: link.createdAt.toISOString(),
+        created: link.createdAt,
       }));
     }),
 
@@ -94,8 +94,8 @@ export const linksTrpcRoutes = t.router({
         linkId: link.linkId,
         accountId: link.accountId,
         destinations: link.destinations,
-        created: link.createdAt.toISOString(),
-        updated: link.updatedAt.toISOString(),
+        created: link.createdAt,
+        updated: link.updatedAt,
       };
     }),
 
