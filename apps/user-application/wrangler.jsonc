@@ -4,6 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
+  "account_id": "dc97e9c719472d572eaf18ce940a949c",
   "name": "user-application",
   "main": "worker/index.ts",
   "compatibility_date": "2025-06-17",
@@ -14,4 +15,11 @@
   "observability": {
     "enabled": true,
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "link_clicks",
+      "database_id": "f3c12e42-5b18-43ee-a17f-fa83ad05b097"
+    }
+  ],
 }
