@@ -21,7 +21,7 @@
 	],
 	"kv_namespaces": [
 		{
-			"binding": "REDIRECT_CACHE",
+			"binding": "cache",
 			"id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
 		}
 	]
