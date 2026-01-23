@@ -22,7 +22,7 @@
 	"kv_namespaces": [
 		{
 			"binding": "cache",
-			"id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+			"id": "0f61eab9757e4ffaa67ca7a4f49cb2f4"
 		}
 	]
 }
