@@ -19,4 +19,10 @@
 			"database_id": "f3c12e42-5b18-43ee-a17f-fa83ad05b097"
 		}
 	],
+	"kv_namespaces": [
+		{
+			"binding": "REDIRECT_CACHE",
+			"id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+		}
+	]
 }
