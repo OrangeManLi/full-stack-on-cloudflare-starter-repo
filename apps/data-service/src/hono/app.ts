@@ -1,13 +1,11 @@
 import { Hono } from "hono";
+import { initDatabase } from "@repo/data-ops/database";
+import { getLink } from "@repo/data-ops/queries/links";
 
 // Define types for link destinations (geo-routing)
 type Destinations = {
   default: string;
   [countryCode: string]: string;
-};
-
-type LinkRow = {
-  destinations: string;
 };
 
 // Define the Hono app with Cloudflare bindings type
@@ -36,49 +34,16 @@ app.get("/geo", (c) => {
 
 // Dynamic route for link redirection (/:id)
 app.get("/:id", async (c) => {
+  // Task 2: Extract path parameter using c.req.param('id')
   const id = c.req.param("id");
 
-  // Step 1: Create cf constant to simplify code
-  const cf = c.req.raw.cf;
+  // Initialize database with D1 binding
+  initDatabase(c.env.DB);
 
-  // Step 2: Extract location variables
-  const country = cf?.country as string | undefined;
+  // Task 3: Call getLink from data-ops package
+  const linkInfoFromDb = await getLink({ linkId: id });
 
-  // Step 5: Check KV cache first for instant redirect
-  const cacheKey = `link:${id}`;
-  const cachedData = await c.env.REDIRECT_CACHE.get<Destinations>(cacheKey, "json");
-
-  let destinations: Destinations | null = null;
-
-  if (cachedData) {
-    // Cache hit - use cached destinations
-    destinations = cachedData;
-  } else {
-    // Step 6: Cache miss - query database using raw D1
-    const result = await c.env.DB.prepare(
-      "SELECT destinations FROM links WHERE link_id = ? LIMIT 1"
-    )
-      .bind(id)
-      .first<LinkRow>();
-
-    if (!result) {
-      return c.json({ error: "Link not found" }, 404);
-    }
-
-    // Parse destinations JSON from database
-    destinations = JSON.parse(result.destinations) as Destinations;
-
-    // Store in KV cache for future requests
-    await c.env.REDIRECT_CACHE.put(
-      cacheKey,
-      JSON.stringify(destinations),
-      { expirationTtl: CACHE_TTL }
-    );
-  }
-
-  // Determine redirect URL based on country (geo-routing)
-  const redirectUrl = (country && destinations[country]) || destinations.default;
-
-  // Perform instant redirect
-  return c.redirect(redirectUrl, 302);
+  // Task 4: Return JSON response for testing (before implementing redirect)
+  // This allows us to verify the database connection is working
+  return c.json(linkInfoFromDb);
 });
